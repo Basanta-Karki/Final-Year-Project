@@ -17,12 +17,45 @@ const EmailVerify = () => {
     const newOtp = [...otp];
     const { value } = event.target;
 
-    if (value === "" || (value.match(/[0-9]/) && value.length === 1)) {
+    // if (value === "" || (value.match(/[0-9]/) && value.length === 1)) {
+    //   newOtp[index] = value;
+    //   setOtp(newOtp);
+    //   if (value && index < otp.length - 1) {
+    //     document.getElementById(`otp-input-${index + 1}`).focus();
+    //   }
+    // }
+
+
+    // Handle normal single-digit input
+    if (value.length === 1 && value.match(/[0-9]/)) {
       newOtp[index] = value;
       setOtp(newOtp);
-      if (value && index < otp.length - 1) {
+      if (index < otp.length - 1) {
         document.getElementById(`otp-input-${index + 1}`).focus();
       }
+    } else if (value === "") {
+      newOtp[index] = "";
+      setOtp(newOtp);
+    }
+  };
+
+  const handleKeyDown = (event, index) => {
+    if (event.key === "Backspace" && otp[index] === "") {
+      if (index > 0) {
+        document.getElementById(`otp-input-${index - 1}`).focus();
+      }
+    }
+  }
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedData = event.clipboardData.getData("text").trim();
+
+    // Validate if pasted data is a 6-digit number
+    if (pastedData.length === otp.length && /^[0-9]+$/.test(pastedData)) {
+      setOtp(pastedData.split(""));
+
+      // Move focus to the last input field
+      document.getElementById(`otp-input-${otp.length - 1}`).focus();
     }
   };
 
@@ -64,6 +97,8 @@ const EmailVerify = () => {
                 maxLength={1}
                 value={value}
                 onChange={(e) => handleChange(e, index)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                onPaste={handlePaste}
                 className="w-12 h-12 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
                 autoComplete="off"
               />
