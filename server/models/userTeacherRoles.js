@@ -6,6 +6,7 @@ const UserRoleSchema = new mongoose.Schema({
   qualification: { type: String, required: true },
   experience: { type: String, required: true },
   monthlyRate: { type: Number, required: true }, 
+  city: { type: String, required: true },
   teachingMode: { type: String, required: true },
   subjects: [{ type: String, required: true }], 
   document: { type: String, required: true },

@@ -1,127 +1,116 @@
-// import React from 'react';
-// import { FiEye } from 'react-icons/fi';
-// import { Link, useNavigate } from "react-router-dom";
 
-
-// const tutors = [
-//   { name: 'Sarah Wilson', subject: 'Mathematics', rating: 4.9, students: 45, earnings: 2890, status: 'Approved' },
-//   { name: 'Michael Chen', subject: 'Physics', rating: 4.8, students: 38, earnings: 2340, status: 'Pending' }
-// ];
-
-// function TopTutors() {
-//   return (
-//     <div className="bg-white shadow rounded-lg p-4 mt-5">
-//       <h3 className="text-lg font-semibold mb-4">Top Performing Tutors</h3>
-//       <div className="overflow-x-auto">
-//         <table className="w-full text-sm text-left text-gray-500">
-//           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-//             <tr>
-//               <th scope="col" className="py-3 px-6">Tutor</th>
-//               <th scope="col" className="py-3 px-6">Subject</th>
-//               <th scope="col" className="py-3 px-6">Rating</th>
-//               <th scope="col" className="py-3 px-6">Students</th>
-//               <th scope="col" className="py-3 px-6">Earnings</th>
-//               <th scope="col" className="py-3 px-6">Status</th>
-//               <th scope="col" className="py-3 px-6">Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {tutors.map((tutor, index) => (
-//               <tr key={index} className="bg-white border-b">
-//                 <td className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-//                   {tutor.name}
-//                 </td>
-//                 <td className="py-4 px-6">{tutor.subject}</td>
-//                 <td className="py-4 px-6">{tutor.rating}</td>
-//                 <td className="py-4 px-6">{tutor.students}</td>
-//                 <td className="py-4 px-6">${tutor.earnings.toLocaleString()}</td>
-//                 <td className="py-4 px-6">
-//                   <span className={`font-semibold ${tutor.status === "Approved" ? "text-green-600" : "text-yellow-600"}`}>
-//                     {tutor.status}
-//                   </span>
-//                 </td>
-//                 <td className="py-4 px-6">
-//                   <button className="text-blue-600 hover:text-blue-900">
-//                     <FiEye className="inline mr-2" />View Profile
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default TopTutors;
-
-
-
-
-import React from 'react';
-import { FiEye } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
-
-const tutors = [
-  { name: 'Sarah Wilson', subject: 'Mathematics', rating: 4.9, students: 45, earnings: 2890, status: 'Approved' },
-  { name: 'Michael Chen', subject: 'Physics', rating: 4.8, students: 38, earnings: 2340, status: 'Pending' }
-];
+import React, { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { AppContent } from "../../Context/AppContex";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function TopTutors() {
-  const navigate = useNavigate();  // Hook for navigation
+  const { backendUrl } = useContext(AppContent);
+  const [tutors, setTutors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Function to navigate to tutor's profile
-  const viewProfile = (tutorName) => {
-    // Navigate to a dynamic route, assuming you have a route set up like '/profile/:tutorName'
-    // navigate(`/profile/${encodeURIComponent(tutorName)}`);
-    navigate("/profile");
-  };
+  useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/api/user/tutors`, {
+          withCredentials: true, // Ensures authentication cookies are sent
+        });
+
+        console.log(" API Response:", response.data);
+        console.log(" Expected tutors:", response.data?.tutors);
+
+        if (response.data && Array.isArray(response.data.tutors)) {
+          setTutors(response.data.tutors);
+          if (response.data.tutors.length > 0) {
+            toast.success("Tutors fetched successfully!", {
+              toastId: "fetch-success",
+            });
+          } else {
+            toast.info("No tutors found.", { toastId: "fetch-info" });
+          }
+        } else {
+          
+          toast.info("No tutors found ", {
+            toastId: "fetch-info",
+          });
+        }
+      } catch (error) {
+        console.error(" Error fetching tutors:", error);
+        toast.error("Failed to fetch tutors. Please try again.", {
+          toastId: "fetch-error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutors();
+  }, [backendUrl]);
+
 
   return (
     <div className="bg-white shadow rounded-lg p-4 mt-5">
-      <h3 className="text-lg font-semibold mb-4">Top Performing Tutors</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
-              <th scope="col" className="py-3 px-6">Tutor</th>
-              <th scope="col" className="py-3 px-6">Subject</th>
-              <th scope="col" className="py-3 px-6">Rating</th>
-              <th scope="col" className="py-3 px-6">Students</th>
-              <th scope="col" className="py-3 px-6">Earnings</th>
-              <th scope="col" className="py-3 px-6">Status</th>
-              <th scope="col" className="py-3 px-6">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tutors.map((tutor, index) => (
-              <tr key={index} className="bg-white border-b">
-                <td className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
-                  {tutor.name}
-                </td>
-                <td className="py-4 px-6">{tutor.subject}</td>
-                <td className="py-4 px-6">{tutor.rating}</td>
-                <td className="py-4 px-6">{tutor.students}</td>
-                <td className="py-4 px-6">${tutor.earnings.toLocaleString()}</td>
-                <td className="py-4 px-6">
-                  <span className={`font-semibold ${tutor.status === "Approved" ? "text-green-600" : "text-yellow-600"}`}>
-                    {tutor.status}
-                  </span>
-                </td>
-                <td className="py-4 px-6">
-                  <button onClick={() => viewProfile(tutor.name)} className="text-blue-600 hover:text-blue-900 flex items-center">
-                    <FiEye className="inline mr-2" />View Profile
-                  </button>
-                </td>
+      <h3 className="text-lg font-semibold mb-4">Registered Tutors</h3>
+      {loading ? (
+        <p className="text-center text-gray-500">Loading tutors...</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th className="py-3 px-6">Tutor</th>
+                <th className="py-3 px-6">Email</th>
+                <th className="py-3 px-6">Subjects</th>
+                <th className="py-3 px-6">Approval Status</th>
+                <th className="py-3 px-6">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {tutors.length > 0 ? (
+                tutors.map((tutor) => (
+                  <tr key={tutor._id} className="bg-white border-b">
+                    <td className="py-4 px-6 font-medium text-gray-900">
+                      {tutor.name}
+                    </td>
+                    <td className="py-4 px-6">{tutor.email}</td>
+                    <td className="py-4 px-6">
+                      {tutor.tutorData?.CurrentSubject || "N/A"}
+                    </td>
+
+                    <td className="py-4 px-6">
+                      <span
+                        className={`font-semibold ${
+                          tutor.isApproved ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {tutor.isApproved ? "Approved" : "Pending"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <Link
+                        to={`/profile/${tutor._id}`} // Pass tutor ID to the profile route
+                        className="text-blue-600 hover:underline"
+                      >
+                        View Profile
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-4 text-gray-500">
+                    No tutors registered yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
 
 export default TopTutors;
-

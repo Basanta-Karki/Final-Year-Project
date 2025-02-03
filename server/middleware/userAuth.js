@@ -4,7 +4,7 @@ const userAuth = async (req, res, next)=>{
   const {token} = req.cookies;
 
   if (!token){
-    return res.json ({sucess: false, message: 'Not Authorized. Login Again'})
+    return res.json ({success: false, message: 'Not Authorized. Login Again'})
     
   }
   try{
@@ -15,7 +15,7 @@ const userAuth = async (req, res, next)=>{
       req.body.userId = tokenDecode.id
       
     }else{
-      return res.json ({sucess: false, message: 'Not Authorized. Login Again'})
+      return res.json ({success: false, message: 'Not Authorized. Login Again'})
 
     }
 

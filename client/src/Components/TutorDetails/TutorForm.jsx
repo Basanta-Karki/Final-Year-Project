@@ -3,6 +3,12 @@ import { toast } from "react-toastify";
 import { AppContent } from "../../Context/AppContex";
 import { useContext } from "react";
 import axios from "axios";
+import { generateUploadButton } from "@uploadthing/react";
+
+export const UploadButton = generateUploadButton({
+  url: "http://localhost:5001/api/uploadthing",
+});
+
 function TutorForm() {
   const { userData, backendUrl, setUserData, setIsLoggedin } =
     useContext(AppContent);
@@ -11,6 +17,7 @@ function TutorForm() {
     Qualifications: "",
     Experience: "",
     HourlyRate: "",
+    City: "",
     TeachingMode: "",
     Subjects: ["Mathematics", "Science", "English"],
     CurrentSubject: "",
@@ -165,6 +172,24 @@ function TutorForm() {
             />
           </div>
 
+          <div>
+            <label
+              htmlFor="city"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              City:
+            </label>
+            <input
+              type="text"
+              name="City"
+              id="city"
+              value={formData.City}
+              onChange={handleChange}
+              className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+              placeholder="Enter your city"
+            />
+          </div>
+
           <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Subjects
@@ -198,6 +223,8 @@ function TutorForm() {
         </div>
         </div>
 
+        
+
         <h2 className="text-xl font-bold text-gray-800 mb-6">
           Select Teaching Mode
         </h2>
@@ -217,15 +244,39 @@ function TutorForm() {
         <h2 className="text-xl font-bold text-gray-800 mb-6">
           Document Verification
         </h2>
+        <UploadButton
+      endpoint="imageUploader"
+      onUploadBegin={console.log}
+      onClientUploadComplete={(res) => {
+        // Do something with the response
+        console.log("Files: ", res);
+        const filekey = res[0].key;
+
+        setFormData((prevData) => ({
+          ...prevData,
+          Documents: [...prevData.Documents, filekey],
+        }));
+      }}
+
+
+
+      onNewFileDropped={(file) => {
+        console.log("new file added by user", file);
+      }}
+      onClientStartedUpload={(file) => {
+        console.log("new file added by user", file);
+      }}
+      onClientFinishedUpload={console.log}
+    />
         {/* Uncomment this section if you need to handle file uploads */}
-        <input
+        {/* <input
           type="file"
           name="Documents"
           id="documents"
           onChange={e => setFormData(prev => ({...prev, Documents: e.target.files}))}
           multiple
           className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
-        />
+        /> */}
 
         <button
           type="submit"

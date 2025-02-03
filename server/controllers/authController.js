@@ -77,7 +77,7 @@ export const login = async (req, res) => {
     const user = await userModel.findOne({ email: normalizedEmail });
     
     // Log to see if the user was found
-    console.log("User found:", user);
+    // console.log("User found:", user);
 
     if (!user) {
       return res.json({ success: false, message: "Invalid email" });
@@ -86,7 +86,7 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     // Log to check password match status
-    console.log("Password match:", isMatch);
+    // console.log("Password match:", isMatch);
 
     if (!isMatch) {
       return res.json({ success: false, message: "Invalid password" });

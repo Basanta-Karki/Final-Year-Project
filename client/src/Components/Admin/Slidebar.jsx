@@ -30,7 +30,7 @@ function Sidebar() {
         </li>
         <li className={`flex items-center px-5 py-3 ${activeItem === 'Analytics' ? 'bg-gray-100' : 'hover:bg-gray-100'} cursor-pointer`}
             onClick={() => handleMenuItemClick('Analytics')}>
-          <FiBarChart2 className="mr-3" size={20} /> <span>Analytics</span>
+          <FiBarChart2 className="mr-3" size={20} /> <span>Tutors</span>
         </li>
         <li className={`flex items-center px-5 py-3 ${activeItem === 'Settings' ? 'bg-gray-100' : 'hover:bg-gray-100'} cursor-pointer`}
             onClick={() => handleMenuItemClick('Settings')}>
